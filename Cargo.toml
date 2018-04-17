@@ -1,0 +1,6 @@
+[package]
+name = "garden"
+version = "0.1.0"
+authors = ["Andrey Kutejko <andy128k@gmail.com>", "Alexey Suslov <alexey.suslov@gmail.com>"]
+
+[dependencies]
