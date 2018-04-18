@@ -1,0 +1,16 @@
+name = "uci_banking"
+description = """
+    UCI Banking Bank Marketing Data Set.
+    Please include this citation if you plan to use this database:
+    [Moro et al., 2014] S. Moro, P. Cortez and P. Rita. A Data-Driven Approach to Predict the Success of Bank Telemarketing. Decision Support Systems, Elsevier, 62:22-31, June 2014
+    """
+homepage = "https://github.com/zalandoresearch/fashion-mnist"
+licence = "MIT"
+
+[[files]]
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip"
+sha1 = "785118991cd7d7ee7d8bf75ea58b6fae969ac185"
+
+[[files]]
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank-additional.zip"
+sha3_224 = "01b53f5b69d0b169070219b4391c623d84ab17d4cea8c8895cbf951d"

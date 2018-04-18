@@ -1,0 +1,18 @@
+name = "cifar-10"
+description = """
+    The CIFAR-10 dataset is a labeled subsets of the 80
+    million tiny images dataset. It consists of 60000
+    32x32 colour images in 10 classes, with 6000 images
+    per class.
+    The compressed archive file that contains the
+    complete dataset is available for download at the
+    offical website linked above; specifically the binary
+    version for C programs. Note that using the data
+    responsibly and respecting copyright remains your
+    responsibility. The authors of CIFAR-10 aren't really
+    explicit about any terms of use, so please read the
+    website to make sure you want to download the
+    dataset."""
+homepage = "https://www.cs.toronto.edu/~kriz/cifar.html"
+licence = "CC0"
+files = [ { url = "https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz", sha256 = "c4a38c50a1bc5f3a1c5537f2155ab9d68f9f25eb1ed8d9ddda3db29a59bca1dd" } ]

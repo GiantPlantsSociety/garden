@@ -5,4 +5,4 @@ extern crate hex;
 extern crate toml;
 
 mod pots;
-mod hex32;
+mod hexx;

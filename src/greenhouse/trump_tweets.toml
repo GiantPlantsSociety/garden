@@ -1,0 +1,12 @@
+name = "trump_tweets"
+description = """Tweets from 538's article:
+    [The World’s Favorite Donald Trump Tweets](https://fivethirtyeight.com/features/the-worlds-favorite-donald-trump-tweets/)
+    Includes a filtered view that is the tweats filtered to remove any tweets that @mention anyone,
+    so no conversations etc, just announcements of opinions/thoughts.
+    """
+homepage = "https://fivethirtyeight.com/features/the-worlds-favorite-donald-trump-tweets/"
+licence = "CC BY 4.0"
+
+[[files]]
+url = "https://raw.githack.com/fivethirtyeight/data/master/trump-twitter/realDonaldTrump_poll_tweets.csv"
+sha256 = "5a63b6cb2503a20517b5d41bd73e821ffbfdddd5cdc1977a547f1c925790bb15"
