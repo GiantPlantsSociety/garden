@@ -28,4 +28,14 @@ impl SeedVault for GreenHouse {
         }
         Ok(None)
     }
+
+    fn search(&self, pattern: &str) -> Result<Vec<Pot>> {
+        let mut result = Vec::new();
+        for pot in &self.0 {
+            if pot.name.contains(pattern) || pot.description.contains(pattern) {
+                result.push(pot.clone());
+            }
+        }
+        Ok(result)
+    }
 }
