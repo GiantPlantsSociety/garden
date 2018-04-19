@@ -4,7 +4,7 @@ use serde::de::{Deserialize, Deserializer, Error as SerdeError};
 
 macro_rules! hex_impl {
     ( $name:ident, $size:expr ) => {
-        #[derive(PartialEq, Debug)]
+        #[derive(PartialEq, Debug, Clone)]
         pub struct $name(pub [u8; $size]);
 
         impl FromStr for $name {
