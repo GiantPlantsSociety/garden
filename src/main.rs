@@ -6,6 +6,11 @@ use std::process::exit;
 use failure::Error;
 use structopt::StructOpt;
 
+#[derive(Debug, StructOpt)]
+struct InfoArgs {
+    name: String,
+}
+
 /// Command line interface for managing data dependencies.
 ///
 /// Visit `documentation` to learn more.
@@ -19,9 +24,7 @@ enum Args {
     },
     /// Display pot info
     #[structopt(name = "info")]
-    Info {
-        name: String,
-    },
+    Info(InfoArgs),
     /// Add new pot into system
     #[structopt(name = "add")]
     Add {
@@ -31,17 +34,20 @@ enum Args {
     }
 }
 
+fn info_command(args: &InfoArgs) -> Result<(), Error> {
+    use garden::svalbard::{SeedVault, greenhouse::GreenHouse};
+
+    let vault = GreenHouse::new();
+    match vault.lookup(&args.name)? {
+        None => println!("No pots named '{}' found.", args.name),
+        Some(pot) => println!("{:#?}", pot),
+    }
+    Ok(())
+}
+
 fn run(args: &Args) -> Result<(), Error> {
     match *args {
-        Args::Info { ref name } => {
-            use garden::svalbard::{SeedVault, greenhouse::GreenHouse};
-            let vault = GreenHouse::new();
-            match vault.lookup(name)? {
-                None => println!("No pots named '{}' found.", name),
-                Some(pot) => println!("{:#?}", pot),
-            }
-            Ok(())
-        },
+        Args::Info(ref args) => info_command(args),
         _ => unimplemented!()
     }
 }
