@@ -1,1 +1,1 @@
-mod pot;
+pub mod pot;

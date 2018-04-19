@@ -1,5 +1,6 @@
 #[macro_use] extern crate structopt;
 extern crate failure;
+extern crate garden;
 
 use std::process::exit;
 use failure::Error;
@@ -31,8 +32,18 @@ enum Args {
 }
 
 fn run(args: &Args) -> Result<(), Error> {
-    println!("{:?}", &args);
-    Ok(())
+    match *args {
+        Args::Info { ref name } => {
+            use garden::svalbard::{SeedVault, greenhouse::GreenHouse};
+            let vault = GreenHouse::new();
+            match vault.lookup(name)? {
+                None => println!("No pots named '{}' found.", name),
+                Some(pot) => println!("{:#?}", pot),
+            }
+            Ok(())
+        },
+        _ => unimplemented!()
+    }
 }
 
 fn main() {

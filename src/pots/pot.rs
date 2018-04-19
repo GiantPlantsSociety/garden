@@ -1,6 +1,6 @@
 use hexx::*;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Pot {
     pub name: String,
     pub description: String,
@@ -10,7 +10,7 @@ pub struct Pot {
     pub licence: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct File {
     pub url: String,
     pub sha256: Option<Hex32>,
