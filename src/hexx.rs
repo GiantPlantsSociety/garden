@@ -1,10 +1,11 @@
 use std::str::FromStr;
-use hex::{FromHex, FromHexError};
+use std::fmt;
+use hex::{FromHex, FromHexError, ToHex};
 use serde::de::{Deserialize, Deserializer, Error as SerdeError};
 
 macro_rules! hex_impl {
     ( $name:ident, $size:expr ) => {
-        #[derive(PartialEq, Debug, Clone)]
+        #[derive(PartialEq, Clone)]
         pub struct $name(pub [u8; $size]);
 
         impl FromStr for $name {
@@ -23,6 +24,15 @@ macro_rules! hex_impl {
                 let s = String::deserialize(deserializer)?;
                 let h = s.parse().map_err(SerdeError::custom)?;
                 Ok(h)
+            }
+        }
+
+        impl fmt::Debug for $name {
+            fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+                write!(f, "Hex{}(", $size)?;
+                self.0.write_hex(f)?;
+                write!(f, ")")?;
+                Ok(())
             }
         }
     };
