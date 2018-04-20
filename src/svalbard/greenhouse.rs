@@ -8,13 +8,13 @@ pub struct GreenHouse(Vec<Pot>);
 impl GreenHouse {
     pub fn new() -> Self {
         GreenHouse(vec![
-            toml::from_str(include_str!("../greenhouse/baby_names.toml")).unwrap(),
-            toml::from_str(include_str!("../greenhouse/cifar_100.toml")).unwrap(),
-            toml::from_str(include_str!("../greenhouse/cifar_10.toml")).unwrap(),
-            toml::from_str(include_str!("../greenhouse/fashion_mnist.toml")).unwrap(),
-            toml::from_str(include_str!("../greenhouse/mnist.toml")).unwrap(),
-            toml::from_str(include_str!("../greenhouse/trump_tweets.toml")).unwrap(),
-            toml::from_str(include_str!("../greenhouse/uci_banking.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/baby_names.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/cifar_100.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/cifar_10.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/fashion_mnist.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/mnist.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/trump_tweets.toml")).unwrap(),
+            toml::from_str(include_str!("greenhouse/uci_banking.toml")).unwrap(),
         ])
     }
 }
