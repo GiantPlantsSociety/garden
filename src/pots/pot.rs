@@ -1,4 +1,10 @@
+use std::collections::HashMap;
 use hexx::*;
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Garden {
+    pub dependencies: HashMap<String, String>,
+}
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Pot {
@@ -43,5 +49,17 @@ mod tests {
         assert_eq!(config.files[0].sha256.as_ref().unwrap(), &"d6524d63a5cf5e5955568cc96b72b3f39258af4f0f79c61cbc01d8853e587f1b".parse::<Hex32>().unwrap());
         assert_eq!(config.files[1].url, "http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt");
         assert_eq!(config.files[1].md5.as_ref().unwrap(), &"8d4fb7e6c68d591d4c3dfef9ec88bf0a".parse::<Hex16>().unwrap());
+    }
+
+    #[test]
+    fn parse_dependencies_from_toml() {
+        let config: Garden = toml::from_str(r#"
+            [dependencies]
+            mnist = "1.0"
+            fashion_mnist = "0.4"
+        "#).unwrap();
+
+        assert_eq!(config.dependencies.get("mnist").unwrap(), "1.0");
+        assert_eq!(config.dependencies.get("fashion_mnist").unwrap(), "0.4");
     }
 }
