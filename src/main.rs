@@ -6,7 +6,7 @@ use std::process::exit;
 use failure::Error;
 use structopt::StructOpt;
 use garden::svalbard::{
-    SeedVault,
+    Repository,
     greenhouse::GreenHouse
 };
 
@@ -42,8 +42,8 @@ enum Args {
 }
 
 fn search_command(args: &SearchArgs) -> Result<(), Error> {
-    let vault = GreenHouse::new();
-    let pots = vault.search(&args.pattern)?;
+    let repo = GreenHouse::new();
+    let pots = repo.search(&args.pattern)?;
     if pots.is_empty() {
         println!("No pots matching pattern '{}' found.", args.pattern);
     } else {
@@ -53,8 +53,8 @@ fn search_command(args: &SearchArgs) -> Result<(), Error> {
 }
 
 fn info_command(args: &InfoArgs) -> Result<(), Error> {
-    let vault = GreenHouse::new();
-    match vault.lookup(&args.name)? {
+    let repo = GreenHouse::new();
+    match repo.lookup(&args.name)? {
         None => println!("No pots named '{}' found.", args.name),
         Some(pot) => println!("{:#?}", pot),
     }
