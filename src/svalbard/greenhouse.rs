@@ -1,7 +1,7 @@
 use toml;
 use error::Result;
 use pots::pot::Pot;
-use super::SeedVault;
+use super::Repository;
 
 pub struct GreenHouse(Vec<Pot>);
 
@@ -19,7 +19,7 @@ impl GreenHouse {
     }
 }
 
-impl SeedVault for GreenHouse {
+impl Repository for GreenHouse {
     fn lookup(&self, name: &str) -> Result<Option<Pot>> {
         for pot in &self.0 {
             if pot.name == name {
