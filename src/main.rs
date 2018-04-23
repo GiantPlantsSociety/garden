@@ -5,20 +5,12 @@ extern crate garden;
 use std::process::exit;
 use failure::Error;
 use structopt::StructOpt;
-use garden::svalbard::{
-    Repository,
-    greenhouse::GreenHouse
+
+use garden::commands::{
+    info,
+    search,
+    add,
 };
-
-#[derive(Debug, StructOpt)]
-struct InfoArgs {
-    name: String,
-}
-
-#[derive(Debug, StructOpt)]
-struct SearchArgs {
-    pattern: String,
-}
 
 /// Command line interface for managing data dependencies.
 ///
@@ -28,44 +20,21 @@ struct SearchArgs {
 enum Args {
     /// Search for pots
     #[structopt(name = "search")]
-    Search(SearchArgs),
+    Search(search::Args),
     /// Display pot info
     #[structopt(name = "info")]
-    Info(InfoArgs),
+    Info(info::Args),
     /// Add new pot into system
     #[structopt(name = "add")]
-    Add {
-        #[structopt(long = "dry-run")]
-        dry_run: bool,
-        names: Vec<String>
-    }
-}
-
-fn search_command(args: &SearchArgs) -> Result<(), Error> {
-    let repo = GreenHouse::new();
-    let pots = repo.search(&args.pattern)?;
-    if pots.is_empty() {
-        println!("No pots matching pattern '{}' found.", args.pattern);
-    } else {
-        println!("{:#?}", pots);
-    }
-    Ok(())
-}
-
-fn info_command(args: &InfoArgs) -> Result<(), Error> {
-    let repo = GreenHouse::new();
-    match repo.lookup(&args.name)? {
-        None => println!("No pots named '{}' found.", args.name),
-        Some(pot) => println!("{:#?}", pot),
-    }
-    Ok(())
+    Add(add::Args),
 }
 
 fn run(args: &Args) -> Result<(), Error> {
     match *args {
-        Args::Search(ref args) => search_command(args),
-        Args::Info(ref args) => info_command(args),
-        _ => unimplemented!()
+        Args::Search(ref args) => search::command(args),
+        Args::Info(ref args) => info::command(args),
+        Args::Add(ref args) => add::command(args),
+        // _ => unimplemented!()
     }
 }
 
