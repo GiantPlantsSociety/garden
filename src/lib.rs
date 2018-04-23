@@ -6,7 +6,10 @@ extern crate serde;
 extern crate hex;
 extern crate toml;
 
+#[macro_use] extern crate structopt;
+
 pub mod error;
 pub mod pots;
 pub mod hexx;
 pub mod svalbard;
+pub mod commands;
