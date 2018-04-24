@@ -1,4 +1,4 @@
-use failure::Error;
+use error::*;
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
 
@@ -7,7 +7,7 @@ pub struct Args {
     pattern: String,
 }
 
-pub fn command(args: &Args) -> Result<(), Error> {
+pub fn command(args: &Args) -> Result<()> {
     let repo = GreenHouse::new();
     let pots = repo.search(&args.pattern)?;
     if pots.is_empty() {

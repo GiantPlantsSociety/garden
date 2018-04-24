@@ -2,8 +2,8 @@
 extern crate failure;
 extern crate garden;
 
+use garden::error::*;
 use std::process::exit;
-use failure::Error;
 use structopt::StructOpt;
 
 use garden::commands::{
@@ -29,7 +29,7 @@ enum Args {
     Add(add::Args),
 }
 
-fn run(args: &Args) -> Result<(), Error> {
+fn run(args: &Args) -> Result<()> {
     match *args {
         Args::Search(ref args) => search::command(args),
         Args::Info(ref args) => info::command(args),
@@ -41,7 +41,7 @@ fn run(args: &Args) -> Result<(), Error> {
 fn main() {
     let args = Args::from_args();
     if let Err(err) = run(&args) {
-        eprintln!("{:#?}", err);
+        eprintln!("{}", err);
         exit(1);
     }
 }

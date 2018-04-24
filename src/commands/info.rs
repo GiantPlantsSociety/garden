@@ -1,4 +1,4 @@
-use failure::Error;
+use error::*;
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
 
@@ -7,7 +7,7 @@ pub struct Args {
     name: String,
 }
 
-pub fn command(args: &Args) -> Result<(), Error> {
+pub fn command(args: &Args) -> Result<()> {
     let repo = GreenHouse::new();
     match repo.lookup(&args.name)? {
         None => println!("No pots named '{}' found.", args.name),
