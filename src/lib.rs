@@ -7,8 +7,13 @@ extern crate hex;
 extern crate toml;
 extern crate reqwest;
 extern crate url;
+extern crate md5;
+extern crate sha1;
+extern crate sha2;
+extern crate sha3;
 extern crate indicatif;
-#[macro_use] extern crate structopt;
+#[macro_use]
+extern crate structopt;
 
 pub mod error;
 pub mod pots;

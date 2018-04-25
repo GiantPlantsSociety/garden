@@ -7,7 +7,9 @@ pub enum Error {
     #[fail(display = "URL parse error.")]
     Parse(#[cause] ::url::ParseError),
     #[fail(display = "File '{}' not found.", _0)]
-    FileNotFound(String)
+    FileNotFound(String),
+    #[fail(display = "File '{}' checksum error.", _0)]
+    FileChecksum(String),
 }
 
 pub type Result<T> = ::std::result::Result<T, Error>;
