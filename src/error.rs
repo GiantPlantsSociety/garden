@@ -1,3 +1,5 @@
+use toml;
+
 #[derive(Debug, Fail)]
 pub enum Error {
     #[fail(display = "I/O error.")]
@@ -10,6 +12,8 @@ pub enum Error {
     FileNotFound(String),
     #[fail(display = "File '{}' checksum error.", _0)]
     FileChecksum(String),
+    #[fail(display = "Toml config parse error.")]
+    TomlParseError(toml::de::Error),
 }
 
 pub type Result<T> = ::std::result::Result<T, Error>;

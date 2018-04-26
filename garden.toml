@@ -1,0 +1,8 @@
+[dependencies]
+baby_names = "*"
+cifar_10 = "*"
+cifar_100 = "*"
+fashion_mnist = "*"
+mnist = "*"
+trump_tweets = "*"
+uci_banking = "*"
