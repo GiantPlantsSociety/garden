@@ -18,5 +18,6 @@ extern crate structopt;
 pub mod error;
 pub mod pots;
 pub mod hexx;
+pub mod summator;
 pub mod svalbard;
 pub mod commands;

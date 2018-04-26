@@ -6,16 +6,13 @@ use pots::pot::Pot;
 
 use reqwest::header::ContentLength;
 use url::Url;
-use md5;
-use sha1;
-use sha2::Sha256;
-use sha3::{Digest, Sha3_224, Sha3_256};
-use hexx::{Hex16, Hex20, Hex28, Hex32};
 
 use error::*;
 use std::fs;
 use std::io::{Read, Write};
 use std::path::Path;
+
+use summator;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
@@ -24,67 +21,25 @@ pub struct Args {
     names: Vec<String>
 }
 
-fn hex_md5(filename: &Path) -> Result<Hex16> {
-    let mut f = fs::File::open(filename).map_err(Error::Io)?;
-    let mut buffer = Vec::new();
-    f.read_to_end(&mut buffer).map_err(Error::Io)?;
-    let digest = md5::compute(buffer);
-    Ok(Hex16(digest.0))
-}
-
-fn hex_sha1(filename: &Path) -> Result<Hex20> {
-    let mut f = fs::File::open(filename).map_err(Error::Io)?;
-    let mut buffer = Vec::new();
-    f.read_to_end(&mut buffer).map_err(Error::Io)?;
-    let digest = sha1::Sha1::from(buffer).digest();
-    Ok(Hex20(digest.bytes()))
-}
-
-fn hex_sha2_256(filename: &Path) -> Result<Hex32> {
-    let mut f = fs::File::open(filename).map_err(Error::Io)?;
-    let mut buffer = Vec::new();
-    f.read_to_end(&mut buffer).map_err(Error::Io)?;
-    let mut digest = Sha256::default();
-    digest.input(&buffer);
-    let mut a: [u8; 32] = Default::default();
-    a.copy_from_slice(digest.result().as_slice());
-    Ok(Hex32(a))
-}
-
-fn hex_sha3_224(filename: &Path) -> Result<Hex28> {
-    let mut f = fs::File::open(filename).map_err(Error::Io)?;
-    let mut buffer = Vec::new();
-    f.read_to_end(&mut buffer).map_err(Error::Io)?;
-    let mut digest = Sha3_224::default();
-    digest.input(&buffer);
-    let mut a: [u8; 28] = Default::default();
-    a.copy_from_slice(digest.result().as_slice());
-    Ok(Hex28(a))
-}
-
-fn hex_sha3_256(filename: &Path) -> Result<Hex32> {
-    let mut f = fs::File::open(filename).map_err(Error::Io)?;
-    let mut buffer = Vec::new();
-    f.read_to_end(&mut buffer).map_err(Error::Io)?;
-    let mut digest = Sha3_256::default();
-    digest.input(&buffer);
-    let mut a: [u8; 32] = Default::default();
-    a.copy_from_slice(digest.result().as_slice());
-    Ok(Hex32(a))
-}
-
 fn download_file<R: Read, W: Write>(inp: &mut R, out: &mut W, bytes_total: u64) -> Result<()> {
     let pb = ProgressBar::new(bytes_total);
     pb.set_style(ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})")
         .progress_chars("#>-"));
 
-    download_file_with_progress(inp, out, &pb)?;
+    process_file(inp, out, Some(&pb))?;
     pb.finish_and_clear();
     Ok(())
 }
 
-fn download_file_with_progress<R: Read, W: Write>(inp: &mut R, out: &mut W, pb: &ProgressBar) -> Result<()> {
+fn calculate_checksums(filename: &Path) -> Result<summator::Sums> {
+    let mut f = fs::File::open(filename).map_err(Error::Io)?;
+    let mut s = summator::Summator::default();
+    process_file(&mut f, &mut s, None)?;
+    Ok(s.into())
+}
+
+fn process_file<R: Read, W: Write>(inp: &mut R, out: &mut W, pb: Option<&ProgressBar>) -> Result<()> {
     let mut buffer = [0; 128 * 1024];
     let mut bytes_read = 0;
     loop {
@@ -96,7 +51,7 @@ fn download_file_with_progress<R: Read, W: Write>(inp: &mut R, out: &mut W, pb: 
         out.write_all(&buffer[..len]).map_err(Error::Io)?;
         bytes_read += len;
 
-        pb.set_position(bytes_read as u64);
+        pb.map(|pb| pb.set_position(bytes_read as u64));
     }
     Ok(())
 }
@@ -128,37 +83,39 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
 
         download_file(&mut response, &mut output, bytes_total)?;
 
+        let checksums = calculate_checksums(&path)?;
+
         if let Some(ref digest) = file.md5 {
             println!(" Validating: md5 => {}", &digest);
-            if hex_md5(&path)? != *digest {
+            if checksums.md5 != *digest {
                 return Err(Error::FileChecksum(path.display().to_string()));
             }
         }
 
         if let Some(ref digest) = file.sha1 {
             println!(" Validating: sha1 => {}", &digest);
-            if hex_sha1(&path)? != *digest {
+            if checksums.sha1 != *digest {
                 return Err(Error::FileChecksum(path.display().to_string()));
             }
         }
 
         if let Some(ref digest) = file.sha2_256 {
             println!(" Validating: sha2_256 => {}", &digest);
-            if hex_sha2_256(&path)? != *digest {
+            if checksums.sha2_256 != *digest {
                 return Err(Error::FileChecksum(path.display().to_string()));
             }
         }
 
         if let Some(ref digest) = file.sha3_224 {
             println!(" Validating: sha3_224 => {}", &digest);
-            if hex_sha3_224(&path)? != *digest {
+            if checksums.sha3_224 != *digest {
                 return Err(Error::FileChecksum(path.display().to_string()));
             }
         }
 
         if let Some(ref digest) = file.sha3_256 {
             println!(" Validating: sha3_256 => {}", &digest);
-            if hex_sha3_256(&path)? != *digest {
+            if checksums.sha3_256 != *digest {
                 return Err(Error::FileChecksum(path.display().to_string()));
             }
         }
