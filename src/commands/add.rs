@@ -128,54 +128,39 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
 
         download_file(&mut response, &mut output, bytes_total)?;
 
-        match file.md5 {
-            Some(ref digest) => {
-                println!(" Validating: md5 => {}", &digest);
-                if hex_md5(&path)? != *digest {
-                    return Err(Error::FileChecksum(path.display().to_string()));
-                }
-            },
-            None => {},
+        if let Some(ref digest) = file.md5 {
+            println!(" Validating: md5 => {}", &digest);
+            if hex_md5(&path)? != *digest {
+                return Err(Error::FileChecksum(path.display().to_string()));
+            }
         }
 
-        match file.sha1 {
-            Some(ref digest) => {
-                println!(" Validating: sha1 => {}", &digest);
-                if hex_sha1(&path)? != *digest {
-                    return Err(Error::FileChecksum(path.display().to_string()));
-                }
-            },
-            None => {},
+        if let Some(ref digest) = file.sha1 {
+            println!(" Validating: sha1 => {}", &digest);
+            if hex_sha1(&path)? != *digest {
+                return Err(Error::FileChecksum(path.display().to_string()));
+            }
         }
 
-        match file.sha2_256 {
-            Some(ref digest) => {
-                println!(" Validating: sha2_256 => {}", &digest);
-                if hex_sha2_256(&path)? != *digest {
-                    return Err(Error::FileChecksum(path.display().to_string()));
-                }
-            },
-            None => {},
+        if let Some(ref digest) = file.sha2_256 {
+            println!(" Validating: sha2_256 => {}", &digest);
+            if hex_sha2_256(&path)? != *digest {
+                return Err(Error::FileChecksum(path.display().to_string()));
+            }
         }
 
-        match file.sha3_224 {
-            Some(ref digest) => {
-                println!(" Validating: sha3_224 => {}", &digest);
-                if hex_sha3_224(&path)? != *digest {
-                    return Err(Error::FileChecksum(path.display().to_string()));
-                }
-            },
-            None => {},
+        if let Some(ref digest) = file.sha3_224 {
+            println!(" Validating: sha3_224 => {}", &digest);
+            if hex_sha3_224(&path)? != *digest {
+                return Err(Error::FileChecksum(path.display().to_string()));
+            }
         }
 
-        match file.sha3_256 {
-            Some(ref digest) => {
-                println!(" Validating: sha3_256 => {}", &digest);
-                if hex_sha3_256(&path)? != *digest {
-                    return Err(Error::FileChecksum(path.display().to_string()));
-                }
-            },
-            None => {},
+        if let Some(ref digest) = file.sha3_256 {
+            println!(" Validating: sha3_256 => {}", &digest);
+            if hex_sha3_256(&path)? != *digest {
+                return Err(Error::FileChecksum(path.display().to_string()));
+            }
         }
     }
     Ok(())

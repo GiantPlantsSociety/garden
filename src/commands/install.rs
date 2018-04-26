@@ -1,5 +1,3 @@
-use svalbard::greenhouse::GreenHouse;
-// use svalbard::Repository;
 use pots::pot::Garden;
 
 use error::*;
@@ -14,7 +12,6 @@ pub struct Args {
 }
 
 pub fn command(_args: &Args) -> Result<()> {
-    let _repo = GreenHouse::new();
     let mut s = String::new();
     let mut file = fs::File::open("garden.toml").map_err(Error::Io)?;
     file.read_to_string(&mut s).map_err(Error::Io)?;
