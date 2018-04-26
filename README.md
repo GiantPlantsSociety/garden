@@ -1,4 +1,4 @@
 # garden
 
-![alt demo](https://github.com/GiantPlantsSociety/garden/blob/readme/doc/intro.png "Adventure time!")
+![alt demo](https://github.com/GiantPlantsSociety/garden/blob/master/doc/intro.png "Adventure time!")
 
