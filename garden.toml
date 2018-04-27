@@ -1,0 +1,5 @@
+[dependencies]
+baby_names = "*"
+mnist = "*"
+trump_tweets = "*"
+uci_banking = "*"

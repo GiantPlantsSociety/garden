@@ -9,4 +9,4 @@ licence = "CC BY 4.0"
 
 [[files]]
 url = "https://raw.githack.com/fivethirtyeight/data/master/trump-twitter/realDonaldTrump_poll_tweets.csv"
-sha256 = "5a63b6cb2503a20517b5d41bd73e821ffbfdddd5cdc1977a547f1c925790bb15"
+sha2_256 = "5a63b6cb2503a20517b5d41bd73e821ffbfdddd5cdc1977a547f1c925790bb15"

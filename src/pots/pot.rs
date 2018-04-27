@@ -19,8 +19,11 @@ pub struct Pot {
 #[derive(Deserialize, Debug, Clone)]
 pub struct File {
     pub url: String,
-    pub sha256: Option<Hex32>,
     pub md5: Option<Hex16>,
+    pub sha1: Option<Hex20>,
+    pub sha2_256: Option<Hex32>,
+    pub sha3_224: Option<Hex28>,
+    pub sha3_256: Option<Hex32>,
 }
 
 #[cfg(test)]
@@ -36,7 +39,7 @@ mod tests {
 
             [[files]]
             url = 'http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt'
-            sha256 = 'd6524d63a5cf5e5955568cc96b72b3f39258af4f0f79c61cbc01d8853e587f1b'
+            sha3_256 = 'd6524d63a5cf5e5955568cc96b72b3f39258af4f0f79c61cbc01d8853e587f1b'
 
             [[files]]
             url = 'http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt'
@@ -46,7 +49,7 @@ mod tests {
         assert_eq!(config.name, "Primes");
         assert_eq!(config.description, "These are the first 65 thousand primes. Still faster to calculate locally.");
         assert_eq!(config.files[0].url, "http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt");
-        assert_eq!(config.files[0].sha256.as_ref().unwrap(), &"d6524d63a5cf5e5955568cc96b72b3f39258af4f0f79c61cbc01d8853e587f1b".parse::<Hex32>().unwrap());
+        assert_eq!(config.files[0].sha3_256.as_ref().unwrap(), &"d6524d63a5cf5e5955568cc96b72b3f39258af4f0f79c61cbc01d8853e587f1b".parse::<Hex32>().unwrap());
         assert_eq!(config.files[1].url, "http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt");
         assert_eq!(config.files[1].md5.as_ref().unwrap(), &"8d4fb7e6c68d591d4c3dfef9ec88bf0a".parse::<Hex16>().unwrap());
     }

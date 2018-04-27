@@ -27,6 +27,12 @@ macro_rules! hex_impl {
             }
         }
 
+        impl fmt::Display for $name {
+            fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+                self.0.write_hex(f)
+            }
+        }
+
         impl fmt::Debug for $name {
             fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
                 write!(f, "Hex{}(", $size)?;
@@ -39,4 +45,6 @@ macro_rules! hex_impl {
 }
 
 hex_impl!(Hex16, 16);
+hex_impl!(Hex20, 20);
+hex_impl!(Hex28, 28);
 hex_impl!(Hex32, 32);
