@@ -1,4 +1,4 @@
-name = "fashion-mnist"
+name = "fashion_mnist"
 description = """
     Fashion-MNIST: a Novel Image Dataset for Benchmarking Machine Learning Algorithms.
     """

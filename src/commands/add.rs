@@ -16,9 +16,13 @@ use summator;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    #[structopt(long = "dry-run")]
-    dry_run: bool,
-    names: Vec<String>
+    names: Vec<String>,
+}
+
+impl Args {
+    pub fn new(names: Vec<String>) -> Self {
+        Self { names }
+    }
 }
 
 fn download_file<R: Read, W: Write>(inp: &mut R, out: &mut W, bytes_total: u64) -> Result<()> {
@@ -129,7 +133,8 @@ pub fn command(args: &Args) -> Result<()> {
         match repo.lookup(name)? {
             None => println!("No pots named '{}' found.", name),
             Some(pot) => {
-                println!("     Adding: {}", pot.name);
+                println!();
+                println!("  🌱  Adding: {}", pot.name);
                 download_pot_files(&pot)?;
                 println!("  Compiling: arrow");
                 println!("    Binding: python");
