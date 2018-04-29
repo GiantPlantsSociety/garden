@@ -17,11 +17,10 @@ pub fn command(_args: &Args) -> Result<()> {
     file.read_to_string(&mut s).map_err(Error::Io)?;
     let config: Garden = toml::from_str(&s).map_err(Error::TomlParseError)?;
 
-    println!("Installing dependencies from 'garden.toml'");
+    println!("Installing dependencies from '{}'", &filename);
     for (name, _version) in &config.dependencies {
-        let names = vec![name.to_string()];
-        let args = add::Args::new(names);
-        add::command(&args)?;
+        println!();
+        add::command(&add::Args { names: vec![name.to_string()] })?;
     }
     Ok(())
 }

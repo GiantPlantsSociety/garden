@@ -4,17 +4,12 @@ extern crate garden;
 extern crate indicatif;
 
 use garden::error::*;
+use garden::commands::*;
+
 use std::process::exit;
 use std::time::Instant;
 use structopt::StructOpt;
 use indicatif::HumanDuration;
-
-use garden::commands::{
-    info,
-    search,
-    add,
-    install,
-};
 
 /// Command line interface for managing data dependencies.
 ///
@@ -31,25 +26,32 @@ enum Args {
     /// Add new pot into system
     #[structopt(name = "add")]
     Add(add::Args),
+    /// Check added pot
+    #[structopt(name = "check")]
+    Check(check::Args),
     /// Install dependencies specified in garden.toml config
     #[structopt(alias = "i", name = "install")]
     Install(install::Args),
 }
 
 fn run(args: &Args) -> Result<()> {
-    println!("garden {}", env!("CARGO_PKG_VERSION"));
+    println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+    println!();
+
     let started = Instant::now();
 
     match *args {
         Args::Search(ref args) => search::command(args),
         Args::Info(ref args) => info::command(args),
         Args::Add(ref args) => add::command(args),
+        Args::Check(ref args) => check::command(args),
         Args::Install(ref args) => install::command(args),
         // _ => unimplemented!()
     }?;
 
     println!();
     println!("Done in {}", HumanDuration(started.elapsed()));
+
     Ok(())
 }
 
