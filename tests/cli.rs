@@ -3,6 +3,7 @@ extern crate assert_cli;
 #[cfg(test)]
 mod cli {
     use assert_cli;
+    use std::path::Path;
 
     #[test]
     fn calling_without_args() {
@@ -35,7 +36,13 @@ mod cli {
         assert_cli::Assert::main_binary()
             .with_args(&["add", "trump_tweets"])
             .stdout().contains("Downloading")
-            .stdout().contains("garden_data/trump_tweets/realDonaldTrump_poll_tweets.csv")
+            .stdout().contains(
+                Path::new("garden_data")
+                    .join("trump_tweets")
+                    .join("realDonaldTrump_poll_tweets.csv")
+                .to_str()
+                .unwrap()
+            )
             .unwrap();
     }
 }
