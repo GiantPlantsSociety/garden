@@ -2,6 +2,7 @@ name = "mnist"
 description = """
     The MNIST database of handwritten digits.
     """
+version = "0.1.0"
 homepage = "http://yann.lecun.com/exdb/mnist/"
 
 [[files]]

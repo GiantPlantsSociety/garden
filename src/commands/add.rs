@@ -3,18 +3,21 @@ use svalbard::Repository;
 use pots::pot::Pot;
 use commands::check;
 use process::*;
-use error::*;
 
 use reqwest::Client;
 use reqwest::header::ContentLength;
 use url::Url;
 
+use error::*;
+use semver::VersionReq;
 use std::fs;
 use std::path::Path;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    pub names: Vec<String>,
+    pub name: String,
+    #[structopt(default_value = "*")]
+    pub version: VersionReq,
 }
 
 fn download_pot_files(pot: &Pot) -> Result<()> {
@@ -49,18 +52,19 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
 
 pub fn command(args: &Args) -> Result<()> {
     let repo = GreenHouse::new();
-    for name in &args.names {
-        match repo.lookup(name)? {
-            None => println!("No pots named '{}' found.", name),
-            Some(pot) => {
-                println!("  🌱  Adding: {}", pot.name);
-                download_pot_files(&pot)?;
-                check::command(&check::Args { names: vec![name.to_string()] })?;
-                println!("  Compiling: arrow");
-                println!("    Binding: python");
-                println!("    Binding: javascript");
-            }
-        }
-    }
+
+    let pot = repo.lookup_or_suggest(&args.name, &args.version)?;
+
+    println!();
+    println!("  🌱  Adding: {} v{}", pot.name, pot.version);
+    download_pot_files(&pot)?;
+    check::command(&check::Args {
+        name: args.name.clone(),
+        version: args.version.clone(),
+    })?;
+    println!("  Compiling: arrow");
+    println!("    Binding: python");
+    println!("    Binding: javascript");
+
     Ok(())
 }

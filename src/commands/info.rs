@@ -1,17 +1,18 @@
+use semver::VersionReq;
 use error::*;
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    name: String,
+    pub name: String,
+    #[structopt(default_value = "*")]
+    pub version: VersionReq,
 }
 
 pub fn command(args: &Args) -> Result<()> {
     let repo = GreenHouse::new();
-    match repo.lookup(&args.name)? {
-        None => println!("No pots named '{}' found.", args.name),
-        Some(pot) => println!("{:#?}", pot),
-    }
+    let pot = repo.lookup_or_suggest(&args.name, &args.version)?;
+    println!("{:#?}", pot);
     Ok(())
 }

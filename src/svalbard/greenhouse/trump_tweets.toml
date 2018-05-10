@@ -4,6 +4,7 @@ description = """Tweets from 538's article:
     Includes a filtered view that is the tweats filtered to remove any tweets that @mention anyone,
     so no conversations etc, just announcements of opinions/thoughts.
     """
+version = "0.1.0"
 homepage = "https://fivethirtyeight.com/features/the-worlds-favorite-donald-trump-tweets/"
 licence = "CC BY 4.0"
 

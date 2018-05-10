@@ -1,15 +1,17 @@
 use std::collections::HashMap;
+use semver::{Version, VersionReq};
 use hexx::*;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Garden {
-    pub dependencies: HashMap<String, String>,
+    pub dependencies: HashMap<String, VersionReq>,
 }
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Pot {
     pub name: String,
     pub description: String,
+    pub version: Version,
     pub files: Vec<File>,
     pub homepage: Option<String>,
     pub reference: Option<String>,
@@ -36,6 +38,7 @@ mod tests {
         let config: Pot = toml::from_str(r#"
             name = 'Primes'
             description = 'These are the first 65 thousand primes. Still faster to calculate locally.'
+            version = '1.2.3'
 
             [[files]]
             url = 'http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt'
@@ -48,6 +51,7 @@ mod tests {
 
         assert_eq!(config.name, "Primes");
         assert_eq!(config.description, "These are the first 65 thousand primes. Still faster to calculate locally.");
+        assert_eq!(config.version, Version::new(1, 2, 3));
         assert_eq!(config.files[0].url, "http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt");
         assert_eq!(config.files[0].sha3_256.as_ref().unwrap(), &"d6524d63a5cf5e5955568cc96b72b3f39258af4f0f79c61cbc01d8853e587f1b".parse::<Hex32>().unwrap());
         assert_eq!(config.files[1].url, "http://staffhome.ecm.uwa.edu.au/~00061811/pub/primes.txt");
@@ -59,10 +63,10 @@ mod tests {
         let config: Garden = toml::from_str(r#"
             [dependencies]
             mnist = "1.0"
-            fashion_mnist = "0.4"
+            fashion_mnist = "*"
         "#).unwrap();
 
-        assert_eq!(config.dependencies.get("mnist").unwrap(), "1.0");
-        assert_eq!(config.dependencies.get("fashion_mnist").unwrap(), "0.4");
+        assert!(config.dependencies.get("mnist").unwrap().matches(&Version::new(1, 0, 0)));
+        assert!(config.dependencies.get("fashion_mnist").unwrap().matches(&Version::new(1, 2, 3)));
     }
 }

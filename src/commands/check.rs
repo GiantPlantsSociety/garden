@@ -3,16 +3,18 @@ use svalbard::Repository;
 use pots::pot::Pot;
 use process::*;
 use summator::{Summator, Sums};
-use error::*;
 
+use error::*;
 use std::fs;
 use std::path::Path;
-
+use semver::VersionReq;
 use url::Url;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    pub names: Vec<String>,
+    pub name: String,
+    #[structopt(default_value = "*")]
+    pub version: VersionReq,
 }
 
 fn check_pot_files(pot: &Pot) -> Result<()> {
@@ -74,13 +76,7 @@ fn check_pot_files(pot: &Pot) -> Result<()> {
 
 pub fn command(args: &Args) -> Result<()> {
     let repo = GreenHouse::new();
-    for name in &args.names {
-        match repo.lookup(name)? {
-            None => println!("No pots named '{}' found.", name),
-            Some(pot) => {
-                check_pot_files(&pot)?;
-            }
-        }
-    }
+    let pot = repo.lookup_or_suggest(&args.name, &args.version)?;
+    check_pot_files(&pot)?;
     Ok(())
 }

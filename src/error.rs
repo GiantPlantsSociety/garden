@@ -14,6 +14,10 @@ pub enum Error {
     FileChecksum(String),
     #[fail(display = "Toml config parse error.")]
     TomlParseError(toml::de::Error),
+    #[fail(display = "No pots named '{}' found.", _0)]
+    LookupError(String),
+    #[fail(display = "The latest '{}' version is v{}.", _0, _1)]
+    LookupErrorWithVersionSuggestion(String, String),
 }
 
 pub type Result<T> = ::std::result::Result<T, Error>;

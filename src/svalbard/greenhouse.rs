@@ -1,4 +1,5 @@
 use toml;
+use semver::VersionReq;
 use error::Result;
 use pots::pot::Pot;
 use super::Repository;
@@ -8,7 +9,8 @@ pub struct GreenHouse(Vec<Pot>);
 impl GreenHouse {
     pub fn new() -> Self {
         let mut repo = GreenHouse(vec![]);
-        repo.publish(&toml::from_str(include_str!("greenhouse/baby_names.toml")).unwrap()).unwrap();
+        repo.publish(&toml::from_str(include_str!("greenhouse/baby_names_0.2.0.toml")).unwrap()).unwrap();
+        repo.publish(&toml::from_str(include_str!("greenhouse/baby_names_0.1.0.toml")).unwrap()).unwrap();
         repo.publish(&toml::from_str(include_str!("greenhouse/cifar_100.toml")).unwrap()).unwrap();
         repo.publish(&toml::from_str(include_str!("greenhouse/cifar_10.toml")).unwrap()).unwrap();
         repo.publish(&toml::from_str(include_str!("greenhouse/fashion_mnist.toml")).unwrap()).unwrap();
@@ -20,9 +22,9 @@ impl GreenHouse {
 }
 
 impl Repository for GreenHouse {
-    fn lookup(&self, name: &str) -> Result<Option<Pot>> {
+    fn lookup(&self, name: &str, version_req: &VersionReq) -> Result<Option<Pot>> {
         for pot in &self.0 {
-            if pot.name == name {
+            if pot.name == name && version_req.matches(&pot.version) {
                 return Ok(Some(pot.clone()));
             }
         }

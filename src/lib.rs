@@ -3,6 +3,7 @@ extern crate failure;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
+extern crate semver;
 extern crate hex;
 extern crate toml;
 extern crate reqwest;

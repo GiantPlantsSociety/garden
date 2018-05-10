@@ -18,9 +18,16 @@ pub fn command(_args: &Args) -> Result<()> {
     let config: Garden = toml::from_str(&s).map_err(Error::TomlParseError)?;
 
     println!("Installing dependencies from '{}'", &filename);
-    for (name, _version) in &config.dependencies {
+    let len = config.dependencies.len();
+    let mut i = 1;
+    for (name, version) in &config.dependencies {
         println!();
-        add::command(&add::Args { names: vec![name.to_string()] })?;
+        println!("[{}/{}] {}=\"{}\"", i, len, name, version);
+        add::command(&add::Args {
+            name: name.to_string(),
+            version: version.clone(),
+        })?;
+        i += 1;
     }
     Ok(())
 }

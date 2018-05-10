@@ -1,5 +1,5 @@
 [dependencies]
-baby_names = "*"
-mnist = "*"
+baby_names = "0.*"
+mnist = "^0.1"
 trump_tweets = "*"
-uci_banking = "*"
+uci_banking = "0.1.0"
