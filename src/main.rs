@@ -26,6 +26,9 @@ enum Args {
     /// Add new pot into system
     #[structopt(name = "add")]
     Add(add::Args),
+    /// Remove pot from dependencies and lock file
+    #[structopt(name = "remove")]
+    Remove(remove::Args),
     /// Check added pot
     #[structopt(name = "check")]
     Check(check::Args),
@@ -44,6 +47,7 @@ fn run(args: &Args) -> Result<()> {
         Args::Search(ref args) => search::command(args),
         Args::Info(ref args) => info::command(args),
         Args::Add(ref args) => add::command(args),
+        Args::Remove(ref args) => remove::command(args),
         Args::Check(ref args) => check::command(args),
         Args::Install(ref args) => install::command(args),
         // _ => unimplemented!()

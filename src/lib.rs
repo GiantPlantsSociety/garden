@@ -13,6 +13,7 @@ extern crate sha1;
 extern crate sha2;
 extern crate sha3;
 extern crate indicatif;
+extern crate dialoguer;
 #[macro_use]
 extern crate structopt;
 

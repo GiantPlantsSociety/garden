@@ -26,6 +26,10 @@ fn check_pot_files(pot: &Pot) -> Result<()> {
         let base = Path::new("garden_data").join(&pot.name);
         let path = base.join(&filename);
 
+        if !base.exists() {
+            return Err(Error::DirNotFound(base.display().to_string()));
+        }
+
         let metadata = fs::metadata(&path).map_err(|_| Error::FileNotFound(path.display().to_string()))?;
         let bytes_total = metadata.len();
 

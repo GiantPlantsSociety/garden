@@ -8,6 +8,8 @@ pub enum Error {
     Network(#[cause] ::reqwest::Error),
     #[fail(display = "URL parse error.")]
     Parse(#[cause] ::url::ParseError),
+    #[fail(display = "Directory '{}' not found.", _0)]
+    DirNotFound(String),
     #[fail(display = "File '{}' not found.", _0)]
     FileNotFound(String),
     #[fail(display = "File '{}' checksum error.", _0)]
