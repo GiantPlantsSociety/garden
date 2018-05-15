@@ -6,4 +6,4 @@ description = """
 version = "0.2.0"
 homepage = "https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data"
 licence = "CC0"
-files = [ { url = "https://www.ssa.gov/oact/babynames/names.zip", sha1 = "de89e5c3a73df311c64bae7382378d4f1ed2832b" } ]
+files = [ { url = "https://www.ssa.gov/oact/babynames/names.zip", sha1 = "7311d142e7d246695f35b8726d92ea3ac84b0ea8" } ]
