@@ -1,6 +1,6 @@
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
-use pots::pot::{Pot, PotName};
+use pots::{Pot, PotName, Garden};
 use error::*;
 
 use url::Url;
@@ -8,15 +8,14 @@ use semver::VersionReq;
 use dialoguer::Confirmation;
 
 use std::fs;
-use std::path::Path;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
     pub name: PotName,
 }
 
-fn remove_pot_files(pot: &Pot) -> Result<()> {
-    let base = Path::new("garden_data").join(&pot.name.to_string());
+fn remove_pot_files(garden: &Garden, pot: &Pot) -> Result<()> {
+    let base = garden.pot_location(pot);
 
     for file in &pot.files {
         let ref url = file.url;
@@ -47,10 +46,12 @@ fn remove_pot_files(pot: &Pot) -> Result<()> {
 }
 
 pub fn command(args: &Args) -> Result<()> {
+    let garden = Garden::new(".")?;
+
     let repo = GreenHouse::new();
     if let Some(pot) = repo.lookup(&args.name, &VersionReq::any())? {
         println!("   Removing: {}", pot.name);
-        remove_pot_files(&pot)?;
+        remove_pot_files(&garden, &pot)?;
     } else {
         return Err(Error::LookupError(args.name.to_string()));
     }

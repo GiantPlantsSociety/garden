@@ -1,12 +1,11 @@
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
-use pots::pot::{Pot, PotName};
+use pots::{Pot, PotName, Garden};
 use process::*;
 use summator::{Summator, Sums};
 
 use error::*;
 use std::fs;
-use std::path::Path;
 use semver::VersionReq;
 use url::Url;
 
@@ -17,13 +16,14 @@ pub struct Args {
     pub version: VersionReq,
 }
 
-fn check_pot_files(pot: &Pot) -> Result<()> {
+fn check_pot_files(garden: &Garden, pot: &Pot) -> Result<()> {
+    let base = garden.pot_location(pot);
+
     for file in &pot.files {
         let ref url = file.url;
         let mut u = Url::parse(url).map_err(Error::Parse)?;
         let filename = u.path_segments().unwrap().last().unwrap();
 
-        let base = Path::new("garden_data").join(&pot.name.to_string());
         let path = base.join(&filename);
 
         if !base.exists() {
@@ -79,8 +79,10 @@ fn check_pot_files(pot: &Pot) -> Result<()> {
 }
 
 pub fn command(args: &Args) -> Result<()> {
+    let garden = Garden::new(".")?;
+
     let repo = GreenHouse::new();
     let pot = repo.lookup_or_suggest(&args.name, &args.version)?;
-    check_pot_files(&pot)?;
+    check_pot_files(&garden, &pot)?;
     Ok(())
 }
