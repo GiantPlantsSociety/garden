@@ -1,6 +1,6 @@
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
-use pots::pot::Pot;
+use pots::pot::{Pot, PotName};
 use error::*;
 
 use url::Url;
@@ -12,11 +12,11 @@ use std::path::Path;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    pub name: String,
+    pub name: PotName,
 }
 
 fn remove_pot_files(pot: &Pot) -> Result<()> {
-    let base = Path::new("garden_data").join(&pot.name);
+    let base = Path::new("garden_data").join(&pot.name.to_string());
 
     for file in &pot.files {
         let ref url = file.url;

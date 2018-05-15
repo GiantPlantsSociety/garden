@@ -4,6 +4,7 @@ extern crate failure;
 extern crate serde_derive;
 extern crate serde;
 extern crate semver;
+extern crate regex;
 extern crate hex;
 extern crate toml;
 extern crate reqwest;

@@ -1,7 +1,7 @@
 use toml;
 use semver::VersionReq;
 use error::Result;
-use pots::pot::Pot;
+use pots::pot::{Pot, PotName};
 use super::Repository;
 
 pub struct GreenHouse(Vec<Pot>);
@@ -22,9 +22,9 @@ impl GreenHouse {
 }
 
 impl Repository for GreenHouse {
-    fn lookup(&self, name: &str, version_req: &VersionReq) -> Result<Option<Pot>> {
+    fn lookup(&self, name: &PotName, version_req: &VersionReq) -> Result<Option<Pot>> {
         for pot in &self.0 {
-            if pot.name == name && version_req.matches(&pot.version) {
+            if pot.name == *name && version_req.matches(&pot.version) {
                 return Ok(Some(pot.clone()));
             }
         }
@@ -34,7 +34,7 @@ impl Repository for GreenHouse {
     fn search(&self, pattern: &str) -> Result<Vec<Pot>> {
         let mut result = Vec::new();
         for pot in &self.0 {
-            if pot.name.contains(pattern) || pot.description.contains(pattern) {
+            if pot.name.to_string().contains(pattern) || pot.description.contains(pattern) {
                 result.push(pot.clone());
             }
         }

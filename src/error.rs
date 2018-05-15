@@ -1,4 +1,5 @@
 use toml;
+use semver;
 
 #[derive(Debug, Fail)]
 pub enum Error {
@@ -16,6 +17,8 @@ pub enum Error {
     FileChecksum(String),
     #[fail(display = "Toml config parse error.")]
     TomlParseError(toml::de::Error),
+    #[fail(display = "Version parse error.")]
+    VersionParseError(semver::ReqParseError),
     #[fail(display = "No pots named '{}' found.", _0)]
     LookupError(String),
     #[fail(display = "The latest '{}' version is v{}.", _0, _1)]

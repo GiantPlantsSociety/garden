@@ -1,11 +1,12 @@
 use semver::VersionReq;
 use error::*;
+use pots::pot::PotName;
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    pub name: String,
+    pub name: PotName,
     #[structopt(default_value = "*")]
     pub version: VersionReq,
 }

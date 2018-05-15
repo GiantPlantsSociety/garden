@@ -1,23 +1,54 @@
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
-use pots::pot::Pot;
+use pots::pot::{Pot, PotName};
 use commands::check;
 use process::*;
 
 use reqwest::Client;
 use reqwest::header::ContentLength;
 use url::Url;
+use toml;
 
 use error::*;
 use semver::VersionReq;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::str::FromStr;
+
+#[derive(Debug)]
+pub enum Requirement {
+    Name { name: PotName, version: VersionReq, },
+    LocalPath(PathBuf),
+}
+
+fn parse_requirement_with_version(s: &str) -> Option<(PotName, VersionReq)> {
+    let parts: Vec<_> = s.splitn(2, '@').collect();
+    let name = PotName::from_str(&parts.get(0)?).ok()?;
+    let version = VersionReq::from_str(&parts.get(1)?).ok()?;
+    Some((name, version))
+}
+
+impl FromStr for Requirement {
+    type Err = String;
+
+    fn from_str(s: &str) -> ::std::result::Result<Self, Self::Err> {
+        if let Ok(name) = PotName::from_str(s) {
+            return Ok(Requirement::Name { name, version: VersionReq::any() });
+        }
+        if let Some((name, version)) = parse_requirement_with_version(s) {
+            return Ok(Requirement::Name { name, version });
+        }
+        if Path::new(s).is_file() {
+            return Ok(Requirement::LocalPath(Path::new(s).to_path_buf()));
+        }
+        Err(format!("Bad pot requirement '{}'.", s))
+    }
+}
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    pub name: String,
-    #[structopt(default_value = "*")]
-    pub version: VersionReq,
+    #[structopt(raw(required = "true", min_values = "1"))]
+    pub pots: Vec<Requirement>,
 }
 
 fn download_pot_files(pot: &Pot) -> Result<()> {
@@ -36,7 +67,7 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
             .map(|ct_len| **ct_len)
             .unwrap_or(0);
 
-        let base = Path::new("garden_data").join(&pot.name);
+        let base = Path::new("garden_data").join(&pot.name.to_string());
         fs::create_dir_all(&base).map_err(Error::Io)?;
 
         let path = base.join(&filename);
@@ -50,21 +81,35 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
     Ok(())
 }
 
-pub fn command(args: &Args) -> Result<()> {
-    let repo = GreenHouse::new();
-
-    let pot = repo.lookup_or_suggest(&args.name, &args.version)?;
+pub fn add(requirement: &Requirement) -> Result<()> {
+    let pot = match requirement {
+        Requirement::Name { name, version } => {
+            let repo = GreenHouse::new();
+            repo.lookup_or_suggest(name, version)?
+        },
+        Requirement::LocalPath(path) => {
+            let description = fs::read_to_string(path).map_err(Error::Io)?;
+            toml::from_str(&description).map_err(Error::TomlParseError)?
+        },
+    };
 
     println!();
     println!("  🌱  Adding: {} v{}", pot.name, pot.version);
     download_pot_files(&pot)?;
     check::command(&check::Args {
-        name: args.name.clone(),
-        version: args.version.clone(),
+        name: pot.name.clone(),
+        version: VersionReq::exact(&pot.version),
     })?;
     println!("  Compiling: arrow");
     println!("    Binding: python");
     println!("    Binding: javascript");
 
+    Ok(())
+}
+
+pub fn command(args: &Args) -> Result<()> {
+    for requirement in &args.pots {
+        add(requirement)?;
+    }
     Ok(())
 }

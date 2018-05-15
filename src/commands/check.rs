@@ -1,6 +1,6 @@
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
-use pots::pot::Pot;
+use pots::pot::{Pot, PotName};
 use process::*;
 use summator::{Summator, Sums};
 
@@ -12,7 +12,7 @@ use url::Url;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
-    pub name: String,
+    pub name: PotName,
     #[structopt(default_value = "*")]
     pub version: VersionReq,
 }
@@ -23,7 +23,7 @@ fn check_pot_files(pot: &Pot) -> Result<()> {
         let mut u = Url::parse(url).map_err(Error::Parse)?;
         let filename = u.path_segments().unwrap().last().unwrap();
 
-        let base = Path::new("garden_data").join(&pot.name);
+        let base = Path::new("garden_data").join(&pot.name.to_string());
         let path = base.join(&filename);
 
         if !base.exists() {

@@ -1,14 +1,28 @@
 use pots::pot::Garden;
+use pots::pot::Dependency;
+use pots::pot::PotName;
 use commands::add;
 
 use error::*;
+use std::str::FromStr;
 use std::fs;
 use std::io::Read;
+use std::path::PathBuf;
 use toml;
+use semver::VersionReq;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
 }
+
+// add
+// - [*] update registry
+// - check meta
+// - [*] init garden
+// - add to garden.toml
+// - add to garden.lock
+// - install exact version from lock
+// - check exact version from lock
 
 pub fn command(_args: &Args) -> Result<()> {
     let mut s = String::new();
@@ -18,16 +32,16 @@ pub fn command(_args: &Args) -> Result<()> {
     let config: Garden = toml::from_str(&s).map_err(Error::TomlParseError)?;
 
     println!("Installing dependencies from '{}'", &filename);
-    let len = config.dependencies.len();
-    let mut i = 1;
-    for (name, version) in &config.dependencies {
-        println!();
-        println!("[{}/{}] {}=\"{}\"", i, len, name, version);
-        add::command(&add::Args {
-            name: name.to_string(),
-            version: version.clone(),
-        })?;
-        i += 1;
+    for (name, dependency) in &config.dependencies {
+        match dependency {
+            Dependency::Version(version) =>
+                add::add(&add::Requirement::Name {
+                    name: PotName::from_str(name).map_err(Error::LookupError)?,
+                    version: VersionReq::parse(version).map_err(Error::VersionParseError)?,
+                })?,
+            Dependency::Reference(location) =>
+                add::add(&add::Requirement::LocalPath(PathBuf::from(location.path.clone())))?,
+        }
     }
     Ok(())
 }
