@@ -1,6 +1,4 @@
-use pots::pot::Garden;
-use pots::pot::Dependency;
-use pots::pot::PotName;
+use pots::{Garden, Dependency, PotName};
 use commands::add;
 
 use error::*;
