@@ -1,6 +1,6 @@
 use svalbard::greenhouse::GreenHouse;
 use svalbard::Repository;
-use pots::pot::{Pot, PotName};
+use pots::{Pot, PotName, Garden};
 use commands::check;
 use process::*;
 
@@ -51,7 +51,9 @@ pub struct Args {
     pub pots: Vec<Requirement>,
 }
 
-fn download_pot_files(pot: &Pot) -> Result<()> {
+fn download_pot_files(garden: &Garden, pot: &Pot) -> Result<()> {
+    let base = garden.pot_location(pot);
+
     let client = Client::new();
     for file in &pot.files {
         let ref url = file.url;
@@ -67,7 +69,6 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
             .map(|ct_len| **ct_len)
             .unwrap_or(0);
 
-        let base = Path::new("garden_data").join(&pot.name.to_string());
         fs::create_dir_all(&base).map_err(Error::Io)?;
 
         let path = base.join(&filename);
@@ -81,7 +82,7 @@ fn download_pot_files(pot: &Pot) -> Result<()> {
     Ok(())
 }
 
-pub fn add(requirement: &Requirement) -> Result<()> {
+pub fn add(garden: &Garden, requirement: &Requirement) -> Result<()> {
     let pot = match requirement {
         Requirement::Name { name, version } => {
             let repo = GreenHouse::new();
@@ -95,7 +96,7 @@ pub fn add(requirement: &Requirement) -> Result<()> {
 
     println!();
     println!("  🌱  Adding: {} v{}", pot.name, pot.version);
-    download_pot_files(&pot)?;
+    download_pot_files(garden, &pot)?;
     check::command(&check::Args {
         name: pot.name.clone(),
         version: VersionReq::exact(&pot.version),
@@ -108,8 +109,9 @@ pub fn add(requirement: &Requirement) -> Result<()> {
 }
 
 pub fn command(args: &Args) -> Result<()> {
+    let garden = Garden::new(".")?;
     for requirement in &args.pots {
-        add(requirement)?;
+        add(&garden, requirement)?;
     }
     Ok(())
 }
