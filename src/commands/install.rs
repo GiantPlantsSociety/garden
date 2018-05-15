@@ -1,4 +1,4 @@
-use pots::{Garden, Dependency, PotName};
+use pots::{GardenPlan, Dependency, PotName};
 use commands::add;
 
 use error::*;
@@ -27,7 +27,7 @@ pub fn command(_args: &Args) -> Result<()> {
     let filename = "garden.toml";
     let mut file = fs::File::open(&filename).map_err(|_| Error::FileNotFound(filename.to_string()))?;
     file.read_to_string(&mut s).map_err(Error::Io)?;
-    let config: Garden = toml::from_str(&s).map_err(Error::TomlParseError)?;
+    let config: GardenPlan = toml::from_str(&s).map_err(Error::TomlParseError)?;
 
     println!("Installing dependencies from '{}'", &filename);
     for (name, dependency) in &config.dependencies {

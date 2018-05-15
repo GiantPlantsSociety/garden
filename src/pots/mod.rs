@@ -1,5 +1,5 @@
 pub mod pot;
-pub mod garden;
+pub mod garden_plan;
 
 pub use self::pot::{Pot, PotName};
-pub use self::garden::{Garden, Dependency, Location};
+pub use self::garden_plan::{GardenPlan, Dependency, Location};

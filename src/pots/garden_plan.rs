@@ -4,7 +4,7 @@ use serde::de;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct Garden {
+pub struct GardenPlan {
     pub dependencies: HashMap<String, Dependency>,
 }
 
@@ -63,7 +63,7 @@ mod tests {
 
     #[test]
     fn parse_dependencies_from_toml() {
-        let config: Garden = toml::from_str(r#"
+        let config: GardenPlan = toml::from_str(r#"
             [dependencies]
             mnist = "1.0"
             fashion_mnist = "*"
