@@ -24,6 +24,14 @@ mod cli {
     }
 
     #[test]
+    fn calling_init() {
+        assert_cli::Assert::main_binary()
+            .with_args(&["init"])
+            .stdout().contains("Nothing to do: 'garden.toml' file is already present.")
+            .unwrap();
+    }
+
+    #[test]
     fn calling_info_mnist() {
         assert_cli::Assert::main_binary()
             .with_args(&["info", "mnist"])
@@ -43,6 +51,22 @@ mod cli {
                 .to_str()
                 .unwrap()
             )
+            .unwrap();
+    }
+
+    #[test]
+    fn calling_add_trump_tweets_with_version() {
+        assert_cli::Assert::main_binary()
+            .with_args(&["add", "trump_tweets@0.1"])
+            .stdout().contains("Downloading")
+            .unwrap();
+    }
+
+    #[test]
+    fn calling_add_trump_tweets_as_local_file() {
+        assert_cli::Assert::main_binary()
+            .with_args(&["add", "src/svalbard/greenhouse/trump_tweets.toml"])
+            .stdout().contains("Downloading")
             .unwrap();
     }
 }

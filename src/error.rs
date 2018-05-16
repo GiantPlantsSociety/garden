@@ -15,6 +15,8 @@ pub enum Error {
     FileNotFound(String),
     #[fail(display = "File '{}' checksum error.", _0)]
     FileChecksum(String),
+    #[fail(display = "Toml config write error.")]
+    TomlWriteError(toml::ser::Error),
     #[fail(display = "Toml config parse error.")]
     TomlParseError(toml::de::Error),
     #[fail(display = "Version parse error.")]

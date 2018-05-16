@@ -23,6 +23,9 @@ enum Args {
     /// Display pot info
     #[structopt(name = "info")]
     Info(info::Args),
+    /// Create empty garden.toml config
+    #[structopt(name = "init")]
+    Init(init::Args),
     /// Add new pot into system
     #[structopt(name = "add")]
     Add(add::Args),
@@ -46,6 +49,7 @@ fn run(args: &Args) -> Result<()> {
     match *args {
         Args::Search(ref args) => search::command(args),
         Args::Info(ref args) => info::command(args),
+        Args::Init(ref args) => init::command(args),
         Args::Add(ref args) => add::command(args),
         Args::Remove(ref args) => remove::command(args),
         Args::Check(ref args) => check::command(args),
