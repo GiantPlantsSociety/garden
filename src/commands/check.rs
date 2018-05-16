@@ -16,7 +16,7 @@ pub struct Args {
     pub version: VersionReq,
 }
 
-fn check_pot_files(garden: &Garden, pot: &Pot) -> Result<()> {
+pub fn check_pot_files(garden: &Garden, pot: &Pot) -> Result<()> {
     let base = garden.pot_location(pot);
 
     for file in &pot.files {

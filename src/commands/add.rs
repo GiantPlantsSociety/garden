@@ -96,11 +96,8 @@ pub fn add(garden: &Garden, requirement: &Requirement) -> Result<()> {
 
     println!();
     println!("  🌱  Adding: {} v{}", pot.name, pot.version);
-    download_pot_files(garden, &pot)?;
-    check::command(&check::Args {
-        name: pot.name.clone(),
-        version: VersionReq::exact(&pot.version),
-    })?;
+    download_pot_files(&garden, &pot)?;
+    check::check_pot_files(&garden, &pot)?;
     println!("  Compiling: arrow");
     println!("    Binding: python");
     println!("    Binding: javascript");
