@@ -3,18 +3,18 @@ use std::fmt;
 use serde::de;
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct GardenPlan {
     pub dependencies: HashMap<String, Dependency>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Serialize, Debug, Clone, PartialEq)]
 pub enum Dependency {
     Version(String),
     Reference(Location),
 }
 
-#[derive(Deserialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 pub struct Location {
     pub path: String,
 }
