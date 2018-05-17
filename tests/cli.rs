@@ -52,18 +52,12 @@ mod cli {
                 .unwrap()
             )
             .unwrap();
-    }
 
-    #[test]
-    fn calling_add_trump_tweets_with_version() {
         assert_cli::Assert::main_binary()
             .with_args(&["add", "trump_tweets@0.1"])
             .stdout().contains("Downloading")
             .unwrap();
-    }
 
-    #[test]
-    fn calling_add_trump_tweets_as_local_file() {
         assert_cli::Assert::main_binary()
             .with_args(&["add", "src/svalbard/greenhouse/trump_tweets.toml"])
             .stdout().contains("Downloading")
