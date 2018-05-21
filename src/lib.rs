@@ -9,6 +9,7 @@ extern crate hex;
 extern crate toml;
 extern crate reqwest;
 extern crate url;
+extern crate url_serde;
 extern crate md5;
 extern crate sha1;
 extern crate sha2;

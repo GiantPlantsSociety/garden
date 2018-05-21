@@ -3,7 +3,6 @@ use commands::add;
 
 use error::*;
 use std::str::FromStr;
-use std::path::PathBuf;
 use semver::VersionReq;
 
 #[derive(Debug, StructOpt)]
@@ -30,8 +29,10 @@ pub fn command(_args: &Args) -> Result<()> {
                     name: PotName::from_str(name).map_err(Error::LookupError)?,
                     version: VersionReq::parse(version).map_err(Error::VersionParseError)?,
                 })?,
-            Dependency::Reference(location) =>
-                add::add(&garden, &add::Requirement::LocalPath(PathBuf::from(location.path.clone())))?,
+            Dependency::Local { path } =>
+                add::add(&garden, &add::Requirement::LocalPath(path.clone()))?,
+            Dependency::Remote { .. } =>
+                unimplemented!(),
         }
     }
     Ok(())
