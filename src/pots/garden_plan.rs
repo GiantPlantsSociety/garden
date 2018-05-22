@@ -3,6 +3,7 @@ use std::fmt;
 use std::path::PathBuf;
 use url::Url;
 use url_serde;
+use semver::{Version, VersionReq};
 use serde::de::{self, Error};
 use serde::Deserialize;
 
@@ -13,7 +14,7 @@ pub struct GardenPlan {
 
 #[derive(Serialize, Debug, Clone, PartialEq)]
 pub enum Dependency {
-    Version(String),
+    Version(VersionReq),
     Local { path: PathBuf },
     Remote { #[serde(with = "url_serde")] url: Url },
 }
@@ -39,7 +40,8 @@ impl<'de> de::Deserialize<'de> for Dependency {
             where
                 E: de::Error,
             {
-                Ok(Dependency::Version(s.to_owned()))
+                let version_req = s.parse().map_err(de::Error::custom)?;
+                Ok(Dependency::Version(version_req))
             }
 
             fn visit_map<V>(self, map: V) -> Result<Self::Value, V::Error>
@@ -67,6 +69,11 @@ impl<'de> de::Deserialize<'de> for Dependency {
     }
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct GardenLock {
+    pub dependencies: HashMap<String, Version>,
+}
+
 #[cfg(test)]
 mod tests {
     use toml;
@@ -83,13 +90,23 @@ mod tests {
         "#).unwrap();
 
         assert_eq!(config.dependencies.get("mnist").unwrap(),
-            &Dependency::Version("1.0".to_string()));
+            &Dependency::Version(VersionReq::parse("1.0").unwrap()));
         assert_eq!(config.dependencies.get("fashion_mnist").unwrap(),
-            &Dependency::Version("*".to_string()));
+            &Dependency::Version(VersionReq::parse("*").unwrap()));
         assert_eq!(config.dependencies.get("baby_names").unwrap(),
             &Dependency::Local { path: PathBuf::from("./baby_names_3.0.toml") } );
         assert_eq!(config.dependencies.get("example").unwrap(),
             &Dependency::Remote { url: Url::parse("https://example.com/data/example_1.2.toml").unwrap() } );
+    }
+
+    #[test]
+    fn parse_dependencies_from_toml_with_funny_version() {
+        let maybe_config: Result<GardenPlan, _> = toml::from_str(r#"
+            [dependencies]
+            baby_names = "funny"
+        "#);
+        assert!(maybe_config.is_err());
+        assert_eq!(format!("{}", maybe_config.unwrap_err()), "the given version requirement is invalid for key `dependencies.baby_names`");
     }
 
     #[test]

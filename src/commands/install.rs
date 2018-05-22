@@ -3,7 +3,6 @@ use commands::add;
 
 use error::*;
 use std::str::FromStr;
-use semver::VersionReq;
 
 #[derive(Debug, StructOpt)]
 pub struct Args {
@@ -27,7 +26,7 @@ pub fn command(_args: &Args) -> Result<()> {
             Dependency::Version(version) =>
                 add::add(&garden, &add::Requirement::Name {
                     name: PotName::from_str(name).map_err(Error::LookupError)?,
-                    version: VersionReq::parse(version).map_err(Error::VersionParseError)?,
+                    version: version.clone(),
                 })?,
             Dependency::Local { path } =>
                 add::add(&garden, &add::Requirement::LocalPath(path.clone()))?,
